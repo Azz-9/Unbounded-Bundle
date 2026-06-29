@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 import me.Azz_9.unbounded_bundle.Config;
+import me.Azz_9.unbounded_bundle.client.BundleSmoothScroll;
 
 @Mixin(ClientBundleTooltip.class)
 public abstract class ClientBundleTooltipMixin {
@@ -49,6 +50,9 @@ public abstract class ClientBundleTooltipMixin {
 	@Shadow private static Identifier getProgressBarTexture(Fraction weight) {
 		throw new UnsupportedOperationException("Implemented via mixin");
 	}
+
+	@Unique
+	private static int unbounded_bundle$lastSize = -1;
 
 	@Unique
 	private int unbounded_bundle$bundleGridSizeX() {
@@ -118,42 +122,66 @@ public abstract class ClientBundleTooltipMixin {
 	@Inject(method = "extractBundleWithItemsTooltip", at = @At("HEAD"), cancellable = true)
 	private void extractBundleWithItemsTooltip(Font font, int x, int y, int w, int h, GuiGraphicsExtractor graphics, Fraction weight, CallbackInfo ci) {
 		if (!Config.isEnabled()) return;
-		int scrollOffset = unbounded_bundle$computeScrollOffset();
+
+		int targetOffset = unbounded_bundle$computeScrollOffset();
+		int currentSize = this.contents.size();
+
+		if (currentSize != unbounded_bundle$lastSize) {
+			BundleSmoothScroll.reset(targetOffset);
+			unbounded_bundle$lastSize = currentSize;
+		} else if (Config.isSmoothScrolling()) {
+			BundleSmoothScroll.update(targetOffset);
+		} else {
+			BundleSmoothScroll.reset(targetOffset);
+		}
+
+		float smoothOffset = Config.isSmoothScrolling()
+				? BundleSmoothScroll.getSmoothOffset()
+				: targetOffset;
 
 		List<ItemStackTemplate> shownItems = this.contents.items();
 		int cols = unbounded_bundle$bundleGridSizeX();
-		int visibleRows = unbounded_bundle$bundleVisibleRows();
 		int gridWidth = unbounded_bundle$bundleGridWidth();
-
 		int left = x + (w - gridWidth) / 2;
 
-		for (int gridRow = scrollOffset; gridRow < scrollOffset + visibleRows; gridRow++) {
-			int rowInWindow = gridRow - scrollOffset;
-			int drawY = y + rowInWindow * SLOT_SIZE;
+		// Hauteur totale de la zone visible en pixels
+		int visibleHeightPx = unbounded_bundle$bundleItemGridHeight();
+
+		// On active le scissor pour clipper les items qui débordent
+		graphics.enableScissor(left, y, left + gridWidth, y + visibleHeightPx);
+
+		for (int gridRow = 0; gridRow < unbounded_bundle$bundleGridSizeY(); gridRow++) {
+			// Position Y avec le décalage smooth en float
+			float drawYf = y + (gridRow - smoothOffset) * SLOT_SIZE;
+			int drawY = Math.round(drawYf);
+
+			// Skip les lignes complètement hors de la fenêtre visible
+			if (drawY + SLOT_SIZE <= y || drawY >= y + visibleHeightPx) continue;
 
 			for (int col = 0; col < cols; col++) {
 				int itemIndex = gridRow * cols + col;
 				if (itemIndex >= shownItems.size()) break;
+
 				int drawX = left + col * SLOT_SIZE;
 				int slotNumber = shownItems.size() - itemIndex;
-
 				extractSlot(slotNumber, drawX, drawY, shownItems, slotNumber, font, graphics);
 			}
 		}
 
+		graphics.disableScissor();
+
 		this.extractSelectedItemTooltip(font, graphics, x, y, w);
 
-		int progressY = y + unbounded_bundle$bundleItemGridHeight() + 4;
-		int width = unbounded_bundle$bundleGridWidth();
-		int fillMax = width - 2;
+		int progressY = y + visibleHeightPx + PROGRESSBAR_MARGIN_Y;
+		int fillMax = gridWidth - 2;
 		int fill = Mth.clamp(Mth.mulAndTruncate(weight, fillMax), 0, fillMax);
 
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getProgressBarTexture(weight), left + 1, progressY, fill, 13);
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESSBAR_BORDER_SPRITE, left, progressY, width, 13);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getProgressBarTexture(weight), left + 1, progressY, fill, PROGRESSBAR_HEIGHT);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESSBAR_BORDER_SPRITE, left, progressY, gridWidth, PROGRESSBAR_HEIGHT);
 
 		Component text = getProgressBarFillText(weight);
 		if (text != null) {
-			graphics.centeredText(font, text, left + width / 2, progressY + 3, -1);
+			graphics.centeredText(font, text, left + gridWidth / 2, progressY + 3, -1);
 		}
 
 		ci.cancel();
