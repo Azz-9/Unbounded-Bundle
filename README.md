@@ -1,32 +1,54 @@
-# MultiLoader Template
+# Unbounded Bundle
 
-This project provides a Gradle project template that can compile Minecraft mods for multiple modloaders using a common project for the sources. This project does not require any third party libraries or dependencies. If you have any questions or want to discuss the project, please join our [Discord](https://discord.myceliummod.network).
+![Minecraft 26.2](https://img.shields.io/badge/Minecraft-26.2-brightgreen)
+![Fabric](https://img.shields.io/badge/Loader-Fabric-blue)
+![Quilt](https://img.shields.io/badge/Loader-Quilt-purple)
+![NeoForge](https://img.shields.io/badge/Loader-NeoForge-orange)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
 
-## Getting Started
+Removes the 12-item display limit on bundles and replaces the fixed tooltip with a scrollable, dynamically-sized grid. Store as many different items as you want and navigate them without leaving your inventory.
 
-### IntelliJ IDEA
-This guide will show how to import the MultiLoader Template into IntelliJ IDEA. The setup process is roughly equivalent to setting up the modloaders independently and should be very familiar to anyone who has worked with their MDKs.
+---
 
-1. Clone or download this repository to your computer.
-2. Configure the project by setting the properties in the `gradle.properties` file. You will also need to change the `rootProject.name`  property in `settings.gradle`, this should match the folder name of your project, or else IDEA may complain.
-3. Open the template's root folder as a new project in IDEA. This is the folder that contains this README.md file and the gradlew executable.
-4. If your default JVM/JDK is not Java 25 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM` and changing the value to a valid Java 25 JVM. You will also need to set the Project SDK to Java 25. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
-5. Open your Run/Debug Configurations. Under the `Application` category there should now be options to run Fabric and NeoForge projects. Select one of the client options and try to run it.
-6. Assuming you were able to run the game in step 5 your workspace should now be set up.
+## Features
 
-### Eclipse
-While it is possible to use this template in Eclipse it is not recommended. During the development of this template multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. While we continue to work with these tools to report and resolve issues support for projects like these are not there yet. For now Eclipse is considered unsupported by this project. The development cycle for build tools is notoriously slow so there are no ETAs available.
+- No more 12-item display limit — all bundle contents are always accessible
+- Dynamic column count that adapts to the number of stored items (configurable, 4–8 columns)
+- Scrollable tooltip with a configurable max height so it never overflows your screen
+- Scroll automatically follows the selected item to keep it always in view
+- Full [ModMenu](https://modrinth.com/mod/modmenu) + [Cloth Config](https://modrinth.com/mod/cloth-config) support for in-game configuration (both optional)
+- Fabric, Quilt and NeoForge support
 
-## Development Guide
-When using this template the majority of your mod should be developed in the `common` project. The `common` project is compiled against the vanilla game and is used to hold code that is shared between the different loader-specific versions of your mod. The `common` project has no knowledge or access to ModLoader specific code, apis, or concepts. Code that requires something from a specific loader must be done through the project that is specific to that loader, such as the `fabric` or `neoforge` projects.
+---
 
-Loader specific projects such as the `fabric` and `neoforge` project are used to load the `common` project into the game. These projects also define code that is specific to that loader. Loader specific projects can access all the code in the `common` project. It is important to remember that the `common` project can not access code from loader specific projects.
+## Installation
 
-## Removing Platforms and Loaders
-While this template has support for many modloaders, new loaders may appear in the future, and existing loaders may become less relevant.
+1. Download the jar for your loader from [Modrinth](#) or [CurseForge](#)
+2. Drop it into your `mods/` folder
 
-Removing loader specific projects is as easy as deleting the folder, and removing the `include("projectname")` line from the `settings.gradle` file.
-For example if you wanted to remove support for `forge` you would follow the following steps:
+**Optional but recommended:**
+- [ModMenu](https://modrinth.com/mod/modmenu) — adds a config button in the mods list
+- [Cloth Config](https://modrinth.com/mod/cloth-config) — required for the in-game config screen (if ModMenu is installed)
 
-1. Delete the subproject folder. For example, delete `MultiLoader-Template/forge`.
-2. Remove the project from `settings.gradle`. For example, remove `include("forge")`. 
+Without these, the mod works out of the box with its default settings. You can still configure it by editing the config file manually (see below).
+
+---
+
+## Configuration
+
+The config file is located at `.minecraft/config/unbounded_bundle.json` and is created automatically on first launch.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `minColumns` | int (4–8) | `4` | Minimum number of columns in the tooltip grid |
+| `maxColumns` | int (4–8) | `6` | Maximum number of columns in the tooltip grid |
+| `scrollable` | boolean | `true` | Enables the scrollable tooltip |
+| `maxRows` | int (3–11) | `3` | Maximum number of visible rows when scrollable is enabled |
+
+The column count adapts automatically to the number of items in the bundle, clamped between `minColumns` and `maxColumns`. `maxRows` has no effect when `scrollable` is set to `false`.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.

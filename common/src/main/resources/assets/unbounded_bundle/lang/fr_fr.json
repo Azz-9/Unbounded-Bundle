@@ -1,0 +1,12 @@
+{
+	"unbounded_bundle.config.title": "Unbounded bundle configuration",
+	"unbounded_bundle.config.category.general": "Général",
+	"unbounded_bundle.config.enabled": "Activer le mod",
+	"unbounded_bundle.config.max_columns": "Max colonnes",
+	"unbounded_bundle.config.min_columns": "Min colonnes",
+	"unbounded_bundle.config.scrollable": "Scrollable",
+	"unbounded_bundle.config.max_rows": "Max lignes",
+
+	"unbounded_bundle.toast.missing_cloth_config.title": "Cloth config manquant",
+	"unbounded_bundle.toast.missing_cloth_config.message": "Cloth config est nécessaire pour ouvrir l'écran de configuration"
+}

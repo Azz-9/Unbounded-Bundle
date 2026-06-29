@@ -2,30 +2,35 @@
     "schemaVersion": 1,
     "id": "${mod_id}",
     "version": "${version}",
+
     "name": "${mod_name}",
     "description": "${description}",
     "authors": [
         "${mod_author}"
     ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+		"issues": "https://github.com/Azz-9/Unbounded-bundle/issues",
+        "sources": "https://github.com/Azz-9/Unbounded-bundle"
     },
+
     "license": "${license}",
     "icon": "${mod_id}.png",
-    "environment": "*",
+
+    "environment": "client",
     "entrypoints": {
         "main": [
-			"me.Azz_9.scrollable_bundle.ScrollableBundle"
+			"me.Azz_9.unbounded_bundle.UnboundedBundle"
         ],
 		"modmenu": [
-			"me.Azz_9.scrollable_bundle.compat.ModMenuCompat"
+			"me.Azz_9.unbounded_bundle.compat.ModMenuCompat"
 		]
     },
+
     "mixins": [
         "${mod_id}.mixins.json",
         "${mod_id}.fabric.mixins.json"
     ],
+
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",
