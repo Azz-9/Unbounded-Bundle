@@ -3,6 +3,8 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+final def includeClothConfig = project.hasProperty("launch_with_cloth_config") && project.launch_with_cloth_config.toBoolean()
+
 neoForge {
     version = neoforge_version
     // Automatically enable neoforge AccessTransformers if the file exists
@@ -47,7 +49,11 @@ repositories {
 }
 
 dependencies {
-	implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+	if (includeClothConfig) {
+		implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+	} else {
+		compileOnly("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+	}
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }

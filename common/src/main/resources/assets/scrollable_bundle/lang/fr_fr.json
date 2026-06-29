@@ -4,5 +4,8 @@
 	"scrollable_bundle.config.max_columns": "Max colonnes",
 	"scrollable_bundle.config.min_columns": "Min colonnes",
 	"scrollable_bundle.config.scrollable": "Scrollable",
-	"scrollable_bundle.config.max_rows": "Max lignes"
+	"scrollable_bundle.config.max_rows": "Max lignes",
+
+	"scrollable_bundle.toast.missing_cloth_config.title": "Cloth config manquant",
+	"scrollable_bundle.toast.missing_cloth_config.message": "Cloth config est nécessaire pour ouvrir l'écran de configuration"
 }

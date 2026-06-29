@@ -19,7 +19,7 @@
 			"me.Azz_9.scrollable_bundle.ScrollableBundle"
         ],
 		"modmenu": [
-			"me.Azz_9.scrollable_bundle.ModMenuCompat"
+			"me.Azz_9.scrollable_bundle.compat.ModMenuCompat"
 		]
     },
     "mixins": [

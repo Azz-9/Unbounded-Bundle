@@ -1,6 +1,8 @@
 package me.Azz_9.scrollable_bundle;
 
 import me.Azz_9.scrollable_bundle.platform.Services;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
 

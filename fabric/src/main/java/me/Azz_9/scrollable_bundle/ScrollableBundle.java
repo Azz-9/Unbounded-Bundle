@@ -1,6 +1,7 @@
 package me.Azz_9.scrollable_bundle;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.client.Minecraft;
 
 public class ScrollableBundle implements ModInitializer {
 

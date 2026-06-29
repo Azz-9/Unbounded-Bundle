@@ -2,16 +2,17 @@ package me.Azz_9.scrollable_bundle;
 
 import static me.Azz_9.scrollable_bundle.Constants.MOD_ID;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.gui.entries.BooleanListEntry;
+import me.Azz_9.scrollable_bundle.client.gui.components.toasts.CustomToastId;
+import me.Azz_9.scrollable_bundle.compat.ClothConfigCompat;
 
 @Mod(MOD_ID)
 public class ScrollableBundle {
@@ -19,59 +20,22 @@ public class ScrollableBundle {
 	public ScrollableBundle(IEventBus eventBus) {
 		CommonClass.init();
 
-		ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (container, parent) -> {
-			ConfigBuilder builder = ConfigBuilder.create()
-					.setParentScreen(parent)
-					.setTitle(Component.translatable("scrollable_bundle.config.title"))
-					.setSavingRunnable(Config::save);
-
-			ConfigCategory general = builder.getOrCreateCategory(Component.translatable("scrollable_bundle.config.category.general"));
-
-			ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-
-			general.addEntry(entryBuilder
-					.startIntSlider(
-							Component.translatable("scrollable_bundle.config.max_columns"),
-							Config.getMaxColumns(), 4, 8
-					)
-					.setDefaultValue(6)
-					.setSaveConsumer(Config::setMaxColumns)
-					.build()
-			);
-
-			general.addEntry(entryBuilder
-					.startIntSlider(
-							Component.translatable("scrollable_bundle.config.min_columns"),
-							Config.getMinColumns(), 4, 8
-					)
-					.setDefaultValue(4)
-					.setSaveConsumer(Config::setMinColumns)
-					.build()
-			);
-
-			BooleanListEntry scrollableEntry = entryBuilder
-					.startBooleanToggle(
-							Component.translatable("scrollable_bundle.config.scrollable"),
-							Config.isScrollable()
-					)
-					.setDefaultValue(true)
-					.setSaveConsumer(Config::setScrollable)
-					.build();
-
-			general.addEntry(scrollableEntry);
-
-			general.addEntry(entryBuilder
-					.startIntSlider(
-							Component.translatable("scrollable_bundle.config.max_rows"),
-							Config.getMaxRows(), 3, 11
-					)
-					.setDefaultValue(3)
-					.setSaveConsumer(Config::setMaxRows)
-					.setRequirement(scrollableEntry::getValue)
-					.build()
-			);
-
-			return builder.build();
-		});
+		ModLoadingContext.get().registerExtensionPoint(
+				IConfigScreenFactory.class,
+				() -> {
+					if (!ModList.get().isLoaded("cloth_config")) {
+						Minecraft.getInstance().execute(() ->
+								SystemToast.add(
+										Minecraft.getInstance().gui.toastManager(),
+										CustomToastId.MISSING_CLOTH_CONFIG,
+										Component.translatable("scrollable_bundle.toast.missing_cloth_config.title"),
+										Component.translatable("scrollable_bundle.toast.missing_cloth_config.message")
+								)
+						);
+						return null;
+					}
+					return (container, parent) -> ClothConfigCompat.buildClothConfigScreen(parent);
+				}
+		);
 	}
 }
