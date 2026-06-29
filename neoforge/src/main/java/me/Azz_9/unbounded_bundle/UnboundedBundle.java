@@ -26,7 +26,7 @@ public class UnboundedBundle {
 					if (!ModList.get().isLoaded("cloth_config")) {
 						Minecraft.getInstance().execute(() ->
 								SystemToast.add(
-										Minecraft.getInstance().gui.toastManager(),
+										Minecraft.getInstance().getToastManager(),
 										CustomToastId.MISSING_CLOTH_CONFIG,
 										Component.translatable("unbounded_bundle.toast.missing_cloth_config.title"),
 										Component.translatable("unbounded_bundle.toast.missing_cloth_config.message")
