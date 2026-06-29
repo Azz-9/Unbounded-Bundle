@@ -1,0 +1,8 @@
+{
+	"scrollable_bundle.config.title": "Scrollable bundle config",
+	"scrollable_bundle.config.category.general": "General",
+	"scrollable_bundle.config.max_columns": "Max columns",
+	"scrollable_bundle.config.min_columns": "Min columns",
+	"scrollable_bundle.config.scrollable": "Scrollable",
+	"scrollable_bundle.config.max_rows": "Max rows"
+}
