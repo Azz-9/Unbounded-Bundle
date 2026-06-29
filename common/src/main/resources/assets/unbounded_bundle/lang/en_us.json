@@ -5,6 +5,7 @@
 	"unbounded_bundle.config.max_columns": "Max columns",
 	"unbounded_bundle.config.min_columns": "Min columns",
 	"unbounded_bundle.config.scrollable": "Scrollable",
+	"unbounded_bundle.config.smooth_scrolling": "Smooth scrolling",
 	"unbounded_bundle.config.max_rows": "Max rows",
 
 	"unbounded_bundle.toast.missing_cloth_config.title": "Missing cloth config",

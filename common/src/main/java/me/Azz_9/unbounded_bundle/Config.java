@@ -23,6 +23,7 @@ public class Config {
 	private int maxColumns = 6;
 	private int minColumns = 4;
 	private boolean scrollable = true;
+	private boolean smoothScrolling = false;
 	private int maxRows = 3;
 
 	public static Config INSTANCE = new Config();
@@ -88,6 +89,14 @@ public class Config {
 
 	public static void setScrollable(boolean scrollable) {
 		INSTANCE.scrollable = scrollable;
+	}
+
+	public static boolean isSmoothScrolling() {
+		return INSTANCE.smoothScrolling;
+	}
+
+	public static void setSmoothScrolling(boolean smoothScrolling) {
+		INSTANCE.smoothScrolling = smoothScrolling;
 	}
 
 	public static int getMaxRows() {

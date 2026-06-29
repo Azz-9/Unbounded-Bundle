@@ -61,6 +61,16 @@ public class ClothConfigCompat {
 				.setRequirement(enabledEntry::getValue)
 				.build();
 
+		BooleanListEntry smoothScrollingEntry = entryBuilder
+				.startBooleanToggle(
+						Component.translatable("unbounded_bundle.config.smooth_scrolling"),
+						Config.isSmoothScrolling()
+				)
+				.setDefaultValue(false)
+				.setSaveConsumer(Config::setSmoothScrolling)
+				.setRequirement(() -> scrollableEntry.getValue() && enabledEntry.getValue())
+				.build();
+
 		IntegerSliderEntry maxRowsSlider = entryBuilder
 				.startIntSlider(
 						Component.translatable("unbounded_bundle.config.max_rows"),
@@ -75,6 +85,7 @@ public class ClothConfigCompat {
 		general.addEntry(maxColumnsSlider);
 		general.addEntry(minColumnsSlider);
 		general.addEntry(scrollableEntry);
+		general.addEntry(smoothScrollingEntry);
 		general.addEntry(maxRowsSlider);
 
 		return builder.build();
