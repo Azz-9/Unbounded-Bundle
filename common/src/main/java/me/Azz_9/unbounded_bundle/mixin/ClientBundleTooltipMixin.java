@@ -3,11 +3,15 @@ package me.Azz_9.unbounded_bundle.mixin;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.BundleContents;
 
 import org.apache.commons.lang3.math.Fraction;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,13 +36,19 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Shadow @Final private static int SLOT_SIZE;
 
-	@Shadow private static void extractProgressbar(int x, int y, Font font, GuiGraphicsExtractor graphics, Fraction weight) {
-		throw new UnsupportedOperationException("Implemented via mixin");
-	}
-
 	@Shadow @Final private static int PROGRESSBAR_HEIGHT;
 
 	@Shadow @Final private static int PROGRESSBAR_MARGIN_Y;
+
+	@Shadow private static @Nullable Component getProgressBarFillText(Fraction weight) {
+		throw new UnsupportedOperationException("Implemented via mixin");
+	}
+
+	@Shadow @Final private static Identifier PROGRESSBAR_BORDER_SPRITE;
+
+	@Shadow private static Identifier getProgressBarTexture(Fraction weight) {
+		throw new UnsupportedOperationException("Implemented via mixin");
+	}
 
 	@Unique
 	private int unbounded_bundle$bundleGridSizeX() {
@@ -132,7 +142,20 @@ public abstract class ClientBundleTooltipMixin {
 		}
 
 		this.extractSelectedItemTooltip(font, graphics, x, y, w);
-		extractProgressbar(left, y + unbounded_bundle$bundleItemGridHeight() + PROGRESSBAR_MARGIN_Y, font, graphics, weight);
+
+		int progressY = y + unbounded_bundle$bundleItemGridHeight() + 4;
+		int width = unbounded_bundle$bundleGridWidth();
+		int fillMax = width - 2;
+		int fill = Mth.clamp(Mth.mulAndTruncate(weight, fillMax), 0, fillMax);
+
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getProgressBarTexture(weight), left + 1, progressY, fill, 13);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESSBAR_BORDER_SPRITE, left, progressY, width, 13);
+
+		Component text = getProgressBarFillText(weight);
+		if (text != null) {
+			graphics.centeredText(font, text, left + width / 2, progressY + 3, -1);
+		}
+
 		ci.cancel();
 	}
 }
