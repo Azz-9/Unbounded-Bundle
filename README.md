@@ -1,6 +1,5 @@
 # Unbounded Bundle
 
-![Minecraft 26.2](https://img.shields.io/badge/Minecraft-26.2-brightgreen)
 ![Fabric](https://img.shields.io/badge/Loader-Fabric-blue)
 ![Quilt](https://img.shields.io/badge/Loader-Quilt-purple)
 ![NeoForge](https://img.shields.io/badge/Loader-NeoForge-orange)
@@ -23,7 +22,7 @@ Removes the 12-item display limit on bundles and replaces the fixed tooltip with
 
 ## Installation
 
-1. Download the jar for your loader from [Modrinth](#) or [CurseForge](#)
+1. Download the jar for your loader from [Modrinth](https://modrinth.com/project/unbounded-bundle) or [CurseForge](#)
 2. Drop it into your `mods/` folder
 
 **Optional but recommended:**
@@ -38,12 +37,13 @@ Without these, the mod works out of the box with its default settings. You can s
 
 The config file is located at `.minecraft/config/unbounded_bundle.json` and is created automatically on first launch.
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `minColumns` | int (4–8) | `4` | Minimum number of columns in the tooltip grid |
-| `maxColumns` | int (4–8) | `6` | Maximum number of columns in the tooltip grid |
-| `scrollable` | boolean | `true` | Enables the scrollable tooltip |
-| `maxRows` | int (3–11) | `3` | Maximum number of visible rows when scrollable is enabled |
+| Option            | Type | Default | Description                                               |
+|-------------------|---|---------|-----------------------------------------------------------|
+| `minColumns`      | int (4–8) | `4`     | Minimum number of columns in the tooltip grid             |
+| `maxColumns`      | int (4–8) | `6`     | Maximum number of columns in the tooltip grid             |
+| `scrollable`      | boolean | `true`  | Enables the scrollable tooltip                            |
+| `smoothScrolling` | boolean | `false` | Enables smooth scrolling                                  |
+| `maxRows`         | int (3–11) | `3`     | Maximum number of visible rows when scrollable is enabled |
 
 The column count adapts automatically to the number of items in the bundle, clamped between `minColumns` and `maxColumns`. `maxRows` has no effect when `scrollable` is set to `false`.
 
