@@ -1,7 +1,6 @@
 # Unbounded Bundle
 
 ![Fabric](https://img.shields.io/badge/Loader-Fabric-blue)
-![Quilt](https://img.shields.io/badge/Loader-Quilt-purple)
 ![NeoForge](https://img.shields.io/badge/Loader-NeoForge-orange)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
 
