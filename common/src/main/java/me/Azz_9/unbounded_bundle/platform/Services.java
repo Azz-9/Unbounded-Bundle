@@ -1,5 +1,6 @@
 package me.Azz_9.unbounded_bundle.platform;
 
+import me.Azz_9.unbounded_bundle.BundleLogger;
 import me.Azz_9.unbounded_bundle.Constants;
 import me.Azz_9.unbounded_bundle.platform.services.IPlatformHelper;
 
@@ -24,7 +25,7 @@ public class Services {
         final T loadedService = ServiceLoader.load(clazz, Services.class.getClassLoader())
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        Constants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        BundleLogger.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }

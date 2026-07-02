@@ -1,5 +1,6 @@
 package me.Azz_9.unbounded_bundle;
 
+import static me.Azz_9.unbounded_bundle.Constants.CLOTH_CONFIG_ID_NEOFORGE;
 import static me.Azz_9.unbounded_bundle.Constants.MOD_ID;
 
 import net.minecraft.client.Minecraft;
@@ -23,7 +24,7 @@ public class UnboundedBundle {
 		ModLoadingContext.get().registerExtensionPoint(
 				IConfigScreenFactory.class,
 				() -> {
-					if (!ModList.get().isLoaded("cloth_config")) {
+					if (!ModList.get().isLoaded(CLOTH_CONFIG_ID_NEOFORGE)) {
 						Minecraft.getInstance().execute(() ->
 								SystemToast.add(
 										Minecraft.getInstance().getToastManager(),

@@ -1,10 +1,8 @@
 package me.Azz_9.unbounded_bundle;
 
-import static me.Azz_9.unbounded_bundle.Constants.LOG;
-import static me.Azz_9.unbounded_bundle.Constants.MOD_ID;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import me.Azz_9.unbounded_bundle.platform.Services;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -12,7 +10,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import me.Azz_9.unbounded_bundle.platform.Services;
+import static me.Azz_9.unbounded_bundle.Constants.MOD_ID;
 
 public class Config {
 
@@ -29,22 +27,22 @@ public class Config {
 	public static Config INSTANCE = new Config();
 
 	public static void save() {
-		LOG.info("Saving config...");
+		BundleLogger.info("Saving config...");
 
 		try (Writer writer = Files.newBufferedWriter(CONFIG_FILE)) {
 			GSON.toJson(INSTANCE, writer);
 		} catch (IOException e) {
-			LOG.error("Failed to save config file : {}", e.getMessage());
+			BundleLogger.error("Failed to save config file : {}", e.getMessage());
 			return;
 		}
 
-		LOG.info("Config successfully saved!");
+		BundleLogger.info("Config successfully saved!");
 	}
 
 	public static void load() {
-		LOG.info("Loading config...");
+		BundleLogger.info("Loading config...");
 		if (!Files.exists(CONFIG_FILE)) {
-			LOG.info("Config file does not exist, creating a new one");
+			BundleLogger.info("Config file does not exist, creating a new one");
 			Config.save();
 			return;
 		}
@@ -52,11 +50,11 @@ public class Config {
 		try (Reader reader = Files.newBufferedReader(CONFIG_FILE)) {
 			INSTANCE = GSON.fromJson(reader, Config.class);
 		} catch (IOException e) {
-			LOG.error("Failed to load config file : {}", e.getMessage());
+			BundleLogger.error("Failed to load config file : {}", e.getMessage());
 			return;
 		}
 
-		LOG.info("Config successfully loaded!");
+		BundleLogger.info("Config successfully loaded!");
 	}
 
 	public static boolean isEnabled() {
