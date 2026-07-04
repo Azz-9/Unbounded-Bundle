@@ -25,60 +25,70 @@ public class ClothConfigCompat {
 		BooleanListEntry enabledEntry = entryBuilder
 				.startBooleanToggle(
 						Component.translatable("unbounded_bundle.config.enabled"),
-						Config.isEnabled()
+						Config.INSTANCE.enabled
 				)
 				.setDefaultValue(true)
-				.setSaveConsumer(Config::setEnabled)
+				.setSaveConsumer(aBoolean -> Config.INSTANCE.enabled = aBoolean)
 				.build();
 
 		IntegerSliderEntry maxColumnsSlider = entryBuilder
 				.startIntSlider(
 						Component.translatable("unbounded_bundle.config.max_columns"),
-						Config.getMaxColumns(), 4, 8
+						Config.INSTANCE.maxColumns, 4, 8
 				)
 				.setDefaultValue(6)
-				.setSaveConsumer(Config::setMaxColumns)
+				.setSaveConsumer(integer -> Config.INSTANCE.maxColumns = integer)
 				.setRequirement(enabledEntry::getValue)
 				.build();
 
 		IntegerSliderEntry minColumnsSlider = entryBuilder
 				.startIntSlider(
 						Component.translatable("unbounded_bundle.config.min_columns"),
-						Config.getMinColumns(), 4, 8
+						Config.INSTANCE.minColumns, 4, 8
 				)
 				.setDefaultValue(4)
-				.setSaveConsumer(Config::setMinColumns)
+				.setSaveConsumer(integer -> Config.INSTANCE.minColumns = integer)
 				.setRequirement(enabledEntry::getValue)
 				.build();
 
 		BooleanListEntry scrollableEntry = entryBuilder
 				.startBooleanToggle(
 						Component.translatable("unbounded_bundle.config.scrollable"),
-						Config.isScrollable()
+						Config.INSTANCE.scrollable
 				)
 				.setDefaultValue(true)
-				.setSaveConsumer(Config::setScrollable)
+				.setSaveConsumer(aBoolean -> Config.INSTANCE.scrollable = aBoolean)
 				.setRequirement(enabledEntry::getValue)
 				.build();
 
 		BooleanListEntry smoothScrollingEntry = entryBuilder
 				.startBooleanToggle(
 						Component.translatable("unbounded_bundle.config.smooth_scrolling"),
-						Config.isSmoothScrolling()
+						Config.INSTANCE.smoothScrolling
 				)
 				.setDefaultValue(false)
-				.setSaveConsumer(Config::setSmoothScrolling)
+				.setSaveConsumer(aBoolean -> Config.INSTANCE.smoothScrolling = aBoolean)
 				.setRequirement(() -> scrollableEntry.getValue() && enabledEntry.getValue())
 				.build();
 
 		IntegerSliderEntry maxRowsSlider = entryBuilder
 				.startIntSlider(
 						Component.translatable("unbounded_bundle.config.max_rows"),
-						Config.getMaxRows(), 3, 11
+						Config.INSTANCE.maxRows, 3, 11
 				)
 				.setDefaultValue(3)
-				.setSaveConsumer(Config::setMaxRows)
+				.setSaveConsumer(integer -> Config.INSTANCE.maxRows = integer)
 				.setRequirement(() -> scrollableEntry.getValue() && enabledEntry.getValue())
+				.build();
+
+		BooleanListEntry usePercentageProgressEntry = entryBuilder
+				.startBooleanToggle(
+						Component.translatable("unbounded_bundle.config.use_percentage_progress"),
+						Config.INSTANCE.usePercentageProgress
+				)
+				.setDefaultValue(false)
+				.setSaveConsumer(aBoolean -> Config.INSTANCE.usePercentageProgress = aBoolean)
+				.setRequirement(enabledEntry::getValue)
 				.build();
 
 		general.addEntry(enabledEntry);
@@ -87,6 +97,7 @@ public class ClothConfigCompat {
 		general.addEntry(scrollableEntry);
 		general.addEntry(smoothScrollingEntry);
 		general.addEntry(maxRowsSlider);
+		general.addEntry(usePercentageProgressEntry);
 
 		return builder.build();
 	}

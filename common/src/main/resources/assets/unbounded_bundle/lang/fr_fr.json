@@ -7,6 +7,7 @@
 	"unbounded_bundle.config.scrollable": "Scrollable",
 	"unbounded_bundle.config.smooth_scrolling": "Défilement fluide",
 	"unbounded_bundle.config.max_rows": "Max lignes",
+	"unbounded_bundle.config.use_percentage_progress": "Utiliser la progression en pourcentage",
 
 	"unbounded_bundle.toast.missing_cloth_config.title": "Cloth config manquant",
 	"unbounded_bundle.toast.missing_cloth_config.message": "Cloth config est nécessaire pour ouvrir l'écran de configuration"

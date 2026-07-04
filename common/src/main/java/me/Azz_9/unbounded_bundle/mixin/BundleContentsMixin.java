@@ -17,7 +17,7 @@ public abstract class BundleContentsMixin {
 
 	@Inject(method = "getNumberOfItemsToShow", at = @At("HEAD"), cancellable = true)
 	private void getNumberOfItemsToShow(CallbackInfoReturnable<Integer> cir) {
-		if (Config.isEnabled()) {
+		if (Config.INSTANCE.enabled) {
 			cir.setReturnValue(this.size());
 		}
 	}
