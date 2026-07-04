@@ -1,8 +1,9 @@
 package me.Azz_9.unbounded_bundle;
 
+import static me.Azz_9.unbounded_bundle.Constants.MOD_ID;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.Azz_9.unbounded_bundle.platform.Services;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -10,19 +11,20 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static me.Azz_9.unbounded_bundle.Constants.MOD_ID;
+import me.Azz_9.unbounded_bundle.platform.Services;
 
 public class Config {
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final Path CONFIG_FILE = Services.PLATFORM.getConfigDir().resolve(MOD_ID + ".json");
 
-	private boolean enabled = true;
-	private int maxColumns = 6;
-	private int minColumns = 4;
-	private boolean scrollable = true;
-	private boolean smoothScrolling = false;
-	private int maxRows = 3;
+	public boolean enabled = true;
+	public int maxColumns = 6;
+	public int minColumns = 4;
+	public boolean scrollable = true;
+	public boolean smoothScrolling = false;
+	public int maxRows = 3;
+	public boolean usePercentageProgress = false;
 
 	public static Config INSTANCE = new Config();
 
@@ -55,53 +57,5 @@ public class Config {
 		}
 
 		BundleLogger.info("Config successfully loaded!");
-	}
-
-	public static boolean isEnabled() {
-		return INSTANCE.enabled;
-	}
-
-	public static void setEnabled(boolean enabled) {
-		INSTANCE.enabled = enabled;
-	}
-
-	public static int getMaxColumns() {
-		return INSTANCE.maxColumns;
-	}
-
-	public static void setMaxColumns(int maxColumns) {
-		INSTANCE.maxColumns = maxColumns;
-	}
-
-	public static int getMinColumns() {
-		return INSTANCE.minColumns;
-	}
-
-	public static void setMinColumns(int minColumns) {
-		INSTANCE.minColumns = minColumns;
-	}
-
-	public static boolean isScrollable() {
-		return INSTANCE.scrollable;
-	}
-
-	public static void setScrollable(boolean scrollable) {
-		INSTANCE.scrollable = scrollable;
-	}
-
-	public static boolean isSmoothScrolling() {
-		return INSTANCE.smoothScrolling;
-	}
-
-	public static void setSmoothScrolling(boolean smoothScrolling) {
-		INSTANCE.smoothScrolling = smoothScrolling;
-	}
-
-	public static int getMaxRows() {
-		return INSTANCE.maxRows;
-	}
-
-	public static void setMaxRows(int maxRows) {
-		INSTANCE.maxRows = maxRows;
 	}
 }

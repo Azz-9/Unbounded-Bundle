@@ -1,5 +1,8 @@
 package me.Azz_9.unbounded_bundle.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
@@ -41,13 +44,14 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Shadow @Final private static int PROGRESSBAR_MARGIN_Y;
 
-	@Shadow private static @Nullable Component getProgressBarFillText(Fraction weight) {
-		throw new UnsupportedOperationException("Implemented via mixin");
-	}
-
 	@Shadow @Final private static Identifier PROGRESSBAR_BORDER_SPRITE;
 
 	@Shadow private static Identifier getProgressBarTexture(Fraction weight) {
+		throw new UnsupportedOperationException("Implemented via mixin");
+	}
+
+	@Shadow
+	private static @Nullable Component getProgressBarFillText(Fraction weight) {
 		throw new UnsupportedOperationException("Implemented via mixin");
 	}
 
@@ -56,7 +60,7 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Unique
 	private int unbounded_bundle$bundleGridSizeX() {
-		return Mth.clamp(this.contents.size(), Config.getMinColumns(), Config.getMaxColumns());
+		return Mth.clamp(this.contents.size(), Config.INSTANCE.minColumns, Config.INSTANCE.maxColumns);
 	}
 
 	@Unique
@@ -66,10 +70,10 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Unique
 	private int unbounded_bundle$bundleVisibleRows() {
-		if (!Config.isScrollable()) {
+		if (!Config.INSTANCE.scrollable) {
 			return unbounded_bundle$bundleGridSizeY();
 		}
-		return Math.min(Config.getMaxRows(), unbounded_bundle$bundleGridSizeY());
+		return Math.min(Config.INSTANCE.maxRows, unbounded_bundle$bundleGridSizeY());
 	}
 
 	@Unique
@@ -84,7 +88,7 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Unique
 	private int unbounded_bundle$computeScrollOffset() {
-		if (!Config.isScrollable()) return 0;
+		if (!Config.INSTANCE.scrollable) return 0;
 
 		int selectedIndex = this.contents.getSelectedItemIndex();
 		if (selectedIndex < 0) return 0;
@@ -100,28 +104,28 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Inject(method = "getWidth", at = @At("HEAD"), cancellable = true)
 	private void getWidth(Font font, CallbackInfoReturnable<Integer> cir) {
-		if (Config.isEnabled() && !this.contents.isEmpty()) {
+		if (Config.INSTANCE.enabled && !this.contents.isEmpty()) {
 			cir.setReturnValue(unbounded_bundle$bundleGridWidth());
 		}
 	}
 
 	@Inject(method = "getHeight", at = @At("HEAD"), cancellable = true)
 	private void getHeight(Font font, CallbackInfoReturnable<Integer> cir) {
-		if (Config.isEnabled() && !this.contents.isEmpty()) {
+		if (Config.INSTANCE.enabled && !this.contents.isEmpty()) {
 			cir.setReturnValue(unbounded_bundle$bundleItemGridHeight() + PROGRESSBAR_HEIGHT + PROGRESSBAR_MARGIN_Y * 2);
 		}
 	}
 
 	@Inject(method = "slotCount", at = @At("HEAD"), cancellable = true)
 	private void slotCount(CallbackInfoReturnable<Integer> cir) {
-		if (Config.isEnabled()) {
+		if (Config.INSTANCE.enabled) {
 			cir.setReturnValue(this.contents.size());
 		}
 	}
 
 	@Inject(method = "extractBundleWithItemsTooltip", at = @At("HEAD"), cancellable = true)
 	private void extractBundleWithItemsTooltip(Font font, int x, int y, int w, int h, GuiGraphicsExtractor graphics, Fraction weight, CallbackInfo ci) {
-		if (!Config.isEnabled()) return;
+		if (!Config.INSTANCE.enabled) return;
 
 		int targetOffset = unbounded_bundle$computeScrollOffset();
 		int currentSize = this.contents.size();
@@ -129,13 +133,13 @@ public abstract class ClientBundleTooltipMixin {
 		if (currentSize != unbounded_bundle$lastSize) {
 			BundleSmoothScroll.reset(targetOffset);
 			unbounded_bundle$lastSize = currentSize;
-		} else if (Config.isSmoothScrolling()) {
+		} else if (Config.INSTANCE.smoothScrolling) {
 			BundleSmoothScroll.update(targetOffset);
 		} else {
 			BundleSmoothScroll.reset(targetOffset);
 		}
 
-		float smoothOffset = Config.isSmoothScrolling()
+		float smoothOffset = Config.INSTANCE.smoothScrolling
 				? BundleSmoothScroll.getSmoothOffset()
 				: targetOffset;
 
@@ -185,5 +189,18 @@ public abstract class ClientBundleTooltipMixin {
 		}
 
 		ci.cancel();
+	}
+
+	@ModifyReturnValue(method = "getProgressBarFillText", at = @At("RETURN"))
+	private static Component getProgressBarFillText(Component original, @Local(name = "weight", argsOnly = true) Fraction weight) {
+		// not filled and not empty
+		if (weight.compareTo(Fraction.ZERO) != 0 && weight.compareTo(Fraction.ONE) != 0) {
+			if (Config.INSTANCE.usePercentageProgress) {
+				return Component.literal(Math.round(weight.floatValue() * 100) + "%");
+			} else {
+				return Component.literal((int) (weight.doubleValue() * 64) + "/64");
+			}
+		}
+		return original;
 	}
 }
