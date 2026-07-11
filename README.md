@@ -24,7 +24,8 @@ Store as many different items as you want and navigate them without leaving your
 
 ## Installation
 
-1. Download the jar for your loader from [Modrinth](https://modrinth.com/project/unbounded-bundle) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/unbounded-bundle)
+1. Download the jar for your loader from [Modrinth](https://modrinth.com/project/unbounded-bundle)
+   or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/unbounded-bundle)
 2. Drop it into your `mods/` folder
 
 **Optional but recommended:**
@@ -41,14 +42,15 @@ file manually (see below).
 
 The config file is located at `.minecraft/config/unbounded_bundle.json` and is created automatically on first launch.
 
-| Option            | Type       | Default | Description                                                |
-|-------------------|------------|---------|------------------------------------------------------------|
-| `enabled`         | Boolean    | `true`  | Enables the whole mod.                                     |
-| `minColumns`      | int (4–8)  | `4`     | Minimum number of columns in the tooltip grid.             |
-| `maxColumns`      | int (4–8)  | `6`     | Maximum number of columns in the tooltip grid.             |
-| `scrollable`      | boolean    | `true`  | Enables the scrollable tooltip.                            |
-| `smoothScrolling` | boolean    | `false` | Enables smooth scrolling.                                  |
-| `maxRows`         | int (3–11) | `3`     | Maximum number of visible rows when scrollable is enabled. |
+| Option                  | Type       | Default | Description                                                |
+|-------------------------|------------|---------|------------------------------------------------------------|
+| `enabled`               | boolean    | `true`  | Enables the whole mod.                                     |
+| `minColumns`            | int (4–8)  | `4`     | Minimum number of columns in the tooltip grid.             |
+| `maxColumns`            | int (4–8)  | `6`     | Maximum number of columns in the tooltip grid.             |
+| `scrollable`            | boolean    | `true`  | Enables the scrollable tooltip.                            |
+| `smoothScrolling`       | boolean    | `false` | Enables smooth scrolling.                                  |
+| `maxRows`               | int (3–11) | `3`     | Maximum number of visible rows when scrollable is enabled. |
+| `usePercentageProgress` | boolean    | `false` | Show the progress as a percentage.                         |                                    
 
 The column count adapts automatically to the number of items in the bundle, clamped between `minColumns` and
 `maxColumns`. `maxRows` has no effect when `scrollable` is set to `false`.
