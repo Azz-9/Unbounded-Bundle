@@ -3,7 +3,7 @@
 ![Fabric](https://img.shields.io/badge/Loader-Fabric-blue)
 ![NeoForge](https://img.shields.io/badge/Loader-NeoForge-orange)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
-![Side: Client](https://img.shields.io/badge/Side-Client-red)
+![Environment: Client](https://img.shields.io/badge/Environment-Client-red)
 
 Removes the 12-item display limit on bundles and replaces the fixed tooltip with a scrollable, dynamically-sized grid.
 Store as many different items as you want and navigate them without leaving your inventory.
