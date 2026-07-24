@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -181,8 +181,8 @@ public abstract class ClientBundleTooltipMixin {
 		int fillMax = gridWidth - 2;
 		int fill = Mth.clamp(Mth.mulAndTruncate(this.contents.weight(), fillMax), 0, fillMax);
 
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getProgressBarTexture(), left + 1, progressY, fill, PROGRESSBAR_HEIGHT);
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESSBAR_BORDER_SPRITE, left, progressY, gridWidth, PROGRESSBAR_HEIGHT);
+		graphics.blitSprite(RenderType::guiTextured, getProgressBarTexture(), left + 1, progressY, fill, PROGRESSBAR_HEIGHT);
+		graphics.blitSprite(RenderType::guiTextured, PROGRESSBAR_BORDER_SPRITE, left, progressY, gridWidth, PROGRESSBAR_HEIGHT);
 
 		Component text = getProgressBarFillText();
 		if (text != null) {

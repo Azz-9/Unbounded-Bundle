@@ -1,9 +1,10 @@
 package me.Azz_9.unbounded_bundle.platform;
 
-import me.Azz_9.unbounded_bundle.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Path;
+
+import me.Azz_9.unbounded_bundle.platform.services.IPlatformHelper;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -16,12 +17,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public boolean isModLoaded(String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
-
-    @Override
-    public boolean isDevelopmentEnvironment() {
-        return FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
-
 	@Override
 	public Path getConfigDir() {
 		return FabricLoader.getInstance().getConfigDir();

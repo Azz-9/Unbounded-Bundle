@@ -1,12 +1,11 @@
 package me.Azz_9.unbounded_bundle.platform;
 
-import me.Azz_9.unbounded_bundle.platform.services.IPlatformHelper;
-
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
+
+import me.Azz_9.unbounded_bundle.platform.services.IPlatformHelper;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
@@ -18,11 +17,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 	@Override
 	public boolean isModLoaded(String modId) {
 		return ModList.get().isLoaded(modId);
-	}
-
-	@Override
-	public boolean isDevelopmentEnvironment() {
-		return !FMLLoader.getCurrent().isProduction();
 	}
 
 	@Override
