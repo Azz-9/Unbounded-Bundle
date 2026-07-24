@@ -1,16 +1,15 @@
 package me.Azz_9.unbounded_bundle.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 
 import org.apache.commons.lang3.math.Fraction;
@@ -32,11 +31,13 @@ import me.Azz_9.unbounded_bundle.client.BundleSmoothScroll;
 @Mixin(ClientBundleTooltip.class)
 public abstract class ClientBundleTooltipMixin {
 
-	@Shadow protected abstract void extractSlot(int slotNumber, int drawX, int drawY, List<ItemStackTemplate> shownItems, int slotIndex, Font font, GuiGraphicsExtractor graphics);
+	@Shadow
+	protected abstract void renderSlot(int slotNumber, int drawX, int drawY, List<ItemStack> shownItems, int slotIndex, Font font, GuiGraphics graphics);
 
 	@Shadow @Final private BundleContents contents;
 
-	@Shadow protected abstract void extractSelectedItemTooltip(Font font, GuiGraphicsExtractor graphics, int x, int y, int w);
+	@Shadow
+	protected abstract void drawSelectedItemTooltip(Font font, GuiGraphics graphics, int x, int y, int w);
 
 	@Shadow @Final private static int SLOT_SIZE;
 
@@ -46,14 +47,12 @@ public abstract class ClientBundleTooltipMixin {
 
 	@Shadow @Final private static Identifier PROGRESSBAR_BORDER_SPRITE;
 
-	@Shadow private static Identifier getProgressBarTexture(Fraction weight) {
-		throw new UnsupportedOperationException("Implemented via mixin");
-	}
+	@Shadow
+	protected abstract Identifier getProgressBarTexture();
 
 	@Shadow
-	private static @Nullable Component getProgressBarFillText(Fraction weight) {
-		throw new UnsupportedOperationException("Implemented via mixin");
-	}
+	@Nullable
+	protected abstract Component getProgressBarFillText();
 
 	@Unique
 	private static int unbounded_bundle$lastSize = -1;
@@ -90,7 +89,7 @@ public abstract class ClientBundleTooltipMixin {
 	private int unbounded_bundle$computeScrollOffset() {
 		if (!Config.INSTANCE.scrollable) return 0;
 
-		int selectedIndex = this.contents.getSelectedItemIndex();
+		int selectedIndex = this.contents.getSelectedItem();
 		if (selectedIndex < 0) return 0;
 
 		int cols = unbounded_bundle$bundleGridSizeX();
@@ -123,8 +122,8 @@ public abstract class ClientBundleTooltipMixin {
 		}
 	}
 
-	@Inject(method = "extractBundleWithItemsTooltip", at = @At("HEAD"), cancellable = true)
-	private void extractBundleWithItemsTooltip(Font font, int x, int y, int w, int h, GuiGraphicsExtractor graphics, Fraction weight, CallbackInfo ci) {
+	@Inject(method = "renderBundleWithItemsTooltip", at = @At("HEAD"), cancellable = true)
+	private void renderBundleWithItemsTooltip(Font font, int x, int y, int width, int height, GuiGraphics graphics, CallbackInfo ci) {
 		if (!Config.INSTANCE.enabled) return;
 
 		int targetOffset = unbounded_bundle$computeScrollOffset();
@@ -143,10 +142,10 @@ public abstract class ClientBundleTooltipMixin {
 				? BundleSmoothScroll.getSmoothOffset()
 				: targetOffset;
 
-		List<ItemStackTemplate> shownItems = this.contents.items();
+		List<ItemStack> shownItems = this.contents.itemCopyStream().toList();
 		int cols = unbounded_bundle$bundleGridSizeX();
 		int gridWidth = unbounded_bundle$bundleGridWidth();
-		int left = x + (w - gridWidth) / 2;
+		int left = x + (width - gridWidth) / 2;
 
 		// Hauteur totale de la zone visible en pixels
 		int visibleHeightPx = unbounded_bundle$bundleItemGridHeight();
@@ -168,37 +167,37 @@ public abstract class ClientBundleTooltipMixin {
 
 				int drawX = left + col * SLOT_SIZE;
 				int slotNumber = shownItems.size() - itemIndex;
-				extractSlot(slotNumber, drawX, drawY, shownItems, slotNumber, font, graphics);
+				renderSlot(slotNumber, drawX, drawY, shownItems, slotNumber, font, graphics);
 			}
 		}
 
 		graphics.disableScissor();
 
-		this.extractSelectedItemTooltip(font, graphics, x, y, w);
+		this.drawSelectedItemTooltip(font, graphics, x, y, width);
 
 		int progressY = y + visibleHeightPx + PROGRESSBAR_MARGIN_Y;
 		int fillMax = gridWidth - 2;
-		int fill = Mth.clamp(Mth.mulAndTruncate(weight, fillMax), 0, fillMax);
+		int fill = Mth.clamp(Mth.mulAndTruncate(this.contents.weight(), fillMax), 0, fillMax);
 
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getProgressBarTexture(weight), left + 1, progressY, fill, PROGRESSBAR_HEIGHT);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getProgressBarTexture(), left + 1, progressY, fill, PROGRESSBAR_HEIGHT);
 		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESSBAR_BORDER_SPRITE, left, progressY, gridWidth, PROGRESSBAR_HEIGHT);
 
-		Component text = getProgressBarFillText(weight);
+		Component text = getProgressBarFillText();
 		if (text != null) {
-			graphics.centeredText(font, text, left + gridWidth / 2, progressY + 3, -1);
+			graphics.drawCenteredString(font, text, left + gridWidth / 2, progressY + 3, -1);
 		}
 
 		ci.cancel();
 	}
 
 	@ModifyReturnValue(method = "getProgressBarFillText", at = @At("RETURN"))
-	private static Component getProgressBarFillText(Component original, @Local(name = "weight", argsOnly = true) Fraction weight) {
+	private Component getProgressBarFillText(Component original) {
 		// not filled and not empty
-		if (weight.compareTo(Fraction.ZERO) != 0 && weight.compareTo(Fraction.ONE) != 0) {
+		if (this.contents.weight().compareTo(Fraction.ZERO) != 0 && this.contents.weight().compareTo(Fraction.ONE) != 0) {
 			if (Config.INSTANCE.usePercentageProgress) {
-				return Component.literal(Math.round(weight.floatValue() * 100) + "%");
+				return Component.literal(Math.round(this.contents.weight().floatValue() * 100) + "%");
 			} else {
-				return Component.literal((int) (weight.doubleValue() * 64) + "/64");
+				return Component.literal((int) (this.contents.weight().doubleValue() * 64) + "/64");
 			}
 		}
 		return original;
